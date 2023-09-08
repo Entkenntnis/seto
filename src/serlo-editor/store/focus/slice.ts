@@ -1,0 +1,38 @@
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+
+import { findNextChildTreeNode, findPreviousChildTreeNode } from './helpers'
+import { type ChildTreeNode, isPureInsertDocumentAction } from '../documents'
+import { State } from '../types'
+
+const initialState: State['focus'] = null as State['focus']
+
+export const focusSlice = createSlice({
+  name: 'focus',
+  initialState,
+  reducers: {
+    focus(_state, action: PayloadAction<string | null>) {
+      return action.payload
+    },
+    focusNext(state, action: PayloadAction<ChildTreeNode | null>) {
+      if (!state || !action.payload) return state
+      const next = findNextChildTreeNode(action.payload, state)
+      if (!next) return state
+      return next
+    },
+    focusPrevious(state, action: PayloadAction<ChildTreeNode | null>) {
+      if (!state || !action.payload) return state
+      const next = findPreviousChildTreeNode(action.payload, state)
+      if (!next) return state
+      return next
+    },
+  },
+  extraReducers: (builder) => {
+    builder.addMatcher(
+      // Always focus the newly inserted document
+      isPureInsertDocumentAction,
+      (_state, action) => action.payload.id
+    )
+  },
+})
+
+export const { focus, focusNext, focusPrevious } = focusSlice.actions
