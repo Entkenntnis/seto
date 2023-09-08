@@ -1,6 +1,5 @@
 import { faUpRightFromSquare } from '@fortawesome/free-solid-svg-icons'
 import clsx from 'clsx'
-import { default as NextLink } from 'next/link'
 import { useRouter } from 'next/router'
 import { ForwardedRef, forwardRef, ReactNode } from 'react'
 
@@ -52,9 +51,7 @@ function InternalLink({
   children,
   className,
   noExternalIcon,
-  forceNoCSR,
   onClick,
-  unreviewed,
   ref,
   title,
 }: LinkProps & { ref?: ForwardedRef<HTMLAnchorElement> }) {
@@ -130,20 +127,6 @@ function InternalLink({
           />
         )}
       </a>
-    )
-  }
-
-  function renderClientSideLink(_href: string) {
-    return (
-      <NextLink
-        prefetch={false}
-        href={_href}
-        className={clsx(className, 'serlo-link')}
-        title={title}
-        onClick={onClick}
-      >
-        {children}
-      </NextLink>
     )
   }
 }

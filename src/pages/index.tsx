@@ -17,7 +17,7 @@ export default function Index() {
           width={1101}
           height={263}
         />
-        <h1 className="mt-4 border-b-2 border-blue-300 pb-2 text-center text-4xl">
+        <h1 className="mt-4 border-b-2 border-brand pb-2 text-center text-4xl">
           Seto
         </h1>
         {data.map((entry, i) => (

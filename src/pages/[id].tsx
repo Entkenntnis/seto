@@ -28,7 +28,7 @@ export default renderedPageNoHooks<SlugProps>(({ pageData }) => {
           width={1101}
           height={263}
         />
-        <h1 className="mt-4 border-b-2 border-blue-300 pb-2 text-center text-4xl">
+        <h1 className="mt-4 border-b-2 border-brand pb-2 text-center text-4xl">
           Seto
         </h1>
         <div className="mb-24 mt-4 text-center">
