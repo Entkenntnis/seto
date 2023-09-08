@@ -36,39 +36,14 @@ module.exports = withBundleAnalyzer({
 
     return config
   },
-  i18n: {
+  /*i18n: {
     locales: ['de', 'en', 'ta', 'hi', 'fr', 'es'],
     defaultLocale: 'de',
     localeDetection: false,
-  },
+  },*/
   reactStrictMode: true,
   productionBrowserSourceMaps: true,
   transpilePackages: ['ramda'], // context: https://github.com/vercel/next.js/issues/40183
-  images: {
-    dangerouslyAllowSVG: true,
-    contentDispositionType: 'attachment',
-    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'assets.serlo.org',
-        port: '',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'embed.serlo.org',
-        port: '',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'community.serlo.org',
-        port: '',
-        pathname: '/**',
-      },
-    ],
-  },
   modularizeImports: {
     // reduces bundle size by preventing import of barrel file and allow tree shaking / code chunking
     '@fortawesome/free-solid-svg-icons': {

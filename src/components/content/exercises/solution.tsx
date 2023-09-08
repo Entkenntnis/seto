@@ -4,8 +4,6 @@ import { useRouter } from 'next/router'
 import { LicenseNotice } from '../license/license-notice'
 import { Link } from '../link'
 import { useAuthentication } from '@/auth/use-authentication'
-import { CommentAreaEntityProps } from '@/components/comments/comment-area-entity'
-import { Lazy } from '@/components/content/lazy'
 import { isPrintMode, printModeSolutionVisible } from '@/components/print-mode'
 import type { MoreAuthorToolsProps } from '@/components/user-tools/foldout-author-menus/more-author-tools'
 import { useAB } from '@/contexts/ab'
@@ -18,11 +16,6 @@ import { exerciseSubmission } from '@/helper/exercise-submission'
 import type { RenderNestedFunction } from '@/schema/article-renderer'
 import { SolutionRenderer } from '@/serlo-editor/plugins/solution/renderer'
 
-const CommentAreaEntity = dynamic<CommentAreaEntityProps>(() =>
-  import('@/components/comments/comment-area-entity').then(
-    (mod) => mod.CommentAreaEntity
-  )
-)
 const AuthorToolsExercises = dynamic<MoreAuthorToolsProps>(() =>
   import(
     '@/components/user-tools/foldout-author-menus/author-tools-exercises'
@@ -89,11 +82,6 @@ export function Solution({
           <>
             {renderNested(steps)}
             {license && <div className="px-side">{license}</div>}
-            {node.context.solutionId && (
-              <Lazy>
-                <CommentAreaEntity entityId={node.context.solutionId} />
-              </Lazy>
-            )}
           </>
         }
         solutionVisibleOnInit={solutionVisibleOnInit}

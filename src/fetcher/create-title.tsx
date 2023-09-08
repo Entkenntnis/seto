@@ -2,15 +2,11 @@ import { Instance, TaxonomyTermType } from './graphql-types/operations'
 import type { MainUuidType } from './query-types'
 import type { SubscriptionNode } from '@/components/pages/manage-subscriptions'
 import { UuidType } from '@/data-types'
-import {
-  getServerSideStrings,
-  getInstanceDataByLang,
-} from '@/helper/feature-i18n'
+import { getInstanceDataByLang } from '@/helper/feature-i18n'
 import { getTranslatedType } from '@/helper/get-translated-type'
 
 export function createTitle(uuid: MainUuidType, instance: Instance): string {
-  const instanceData = getServerSideStrings(instance)
-  const suffix = ` - ${instanceData.title}`
+  const suffix = ` - Seto`
 
   const title = getRawTitle(uuid, instance)
 

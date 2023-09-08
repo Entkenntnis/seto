@@ -13,25 +13,25 @@ export const experiments: {
     experiment: 'baseline',
     ids: [25103],
     start: -1,
-    end: new Date('2023-09-15T00:00:00+0200').getTime(),
+    end: new Date('2022-09-15T00:00:00+0200').getTime(),
   },
   {
     experiment: 'dreisatzv0',
     ids: [66809],
     start: -1,
-    end: new Date('2023-09-30T00:00:00+0200').getTime(),
+    end: new Date('2022-09-30T00:00:00+0200').getTime(),
   },
   {
     experiment: 'reorder_trig',
     ids: [30680],
     start: -1,
-    end: new Date('2023-09-15T00:00:00+0200').getTime(),
+    end: new Date('2022-09-15T00:00:00+0200').getTime(),
   },
   {
     experiment: 'headings',
     ids: [25616],
     start: -1,
-    end: new Date('2023-09-30T00:00:00+0200').getTime(),
+    end: new Date('2022-09-30T00:00:00+0200').getTime(),
   },
 ]
 

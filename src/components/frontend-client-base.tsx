@@ -1,6 +1,5 @@
 import type { AuthorizationPayload } from '@serlo/authorization'
-import Cookies from 'js-cookie'
-import { Router, useRouter } from 'next/router'
+import { Router } from 'next/router'
 import NProgress from 'nprogress'
 import { PropsWithChildren, useState, useEffect } from 'react'
 import { default as ToastNotice } from 'react-notify-toast'
@@ -10,7 +9,6 @@ import { ConditionalWrap } from './conditional-wrap'
 import { HeaderFooter } from './header-footer'
 import { MaxWidthDiv } from './navigation/max-width-div'
 import { AuthProvider } from '@/auth/auth-provider'
-import { checkLoggedIn } from '@/auth/cookie/check-logged-in'
 import { PrintMode } from '@/components/print-mode'
 import { EntityIdProvider } from '@/contexts/entity-id-context'
 import { InstanceDataProvider } from '@/contexts/instance-context'
@@ -18,7 +16,6 @@ import { LoggedInDataProvider } from '@/contexts/logged-in-data-context'
 import { InstanceData, LoggedInData } from '@/data-types'
 import { Instance } from '@/fetcher/graphql-types/operations'
 import { triggerSentry } from '@/helper/trigger-sentry'
-import { frontendOrigin } from '@/helper/urls/frontent-origin'
 
 export type FrontendClientBaseProps = PropsWithChildren<{
   noHeaderFooter?: boolean
@@ -56,9 +53,8 @@ export function FrontendClientBase({
   showNav,
   entityId,
   authorization,
-  loadLoggedInData,
 }: FrontendClientBaseProps) {
-  const { locale } = useRouter()
+  const locale = 'de'
   const [instanceData] = useState<InstanceData>(() => {
     if (typeof window === 'undefined') {
       // load instance data for server side rendering
@@ -95,19 +91,7 @@ export function FrontendClientBase({
     }
   })
 
-  const [loggedInData, setLoggedInData] = useState<LoggedInData | null>(
-    getCachedLoggedInData()
-  )
-
-  const isLoggedIn = checkLoggedIn()
-
-  useEffect(fetchLoggedInData, [
-    instanceData.lang,
-    loggedInData,
-    loadLoggedInData,
-    isLoggedIn,
-    locale,
-  ])
+  const [loggedInData] = useState<LoggedInData | null>(null)
 
   // dev
   //console.dir(initialProps)
@@ -142,40 +126,4 @@ export function FrontendClientBase({
       </AuthProvider>
     </InstanceDataProvider>
   )
-
-  function getCachedLoggedInData() {
-    if (
-      typeof window === 'undefined' ||
-      window.location.hostname === 'localhost'
-    )
-      return null
-    const cacheValue = sessionStorage.getItem(
-      `___loggedInData_${instanceData.lang}`
-    )
-    if (!cacheValue) return null
-    return JSON.parse(cacheValue) as LoggedInData
-  }
-
-  function fetchLoggedInData() {
-    const cookies = typeof window === 'undefined' ? {} : Cookies.get()
-    if (loggedInData) return
-    if (isLoggedIn || loadLoggedInData) {
-      fetch(frontendOrigin + '/api/locale/' + instanceData.lang)
-        .then((res) => res.json())
-        .then((value) => {
-          if (value) {
-            sessionStorage.setItem(
-              `___loggedInData_${instanceData.lang}`,
-              JSON.stringify(value)
-            )
-            setLoggedInData(value as LoggedInData)
-          }
-        })
-        .catch(() => {})
-      if (!cookies['__serlo_preview__']) {
-        // bypass cache
-        fetch('/api/frontend/preview').catch(() => {})
-      }
-    }
-  }
 }

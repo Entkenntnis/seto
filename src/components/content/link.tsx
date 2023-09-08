@@ -59,14 +59,15 @@ function InternalLink({
   title,
 }: LinkProps & { ref?: ForwardedRef<HTMLAnchorElement> }) {
   const router = useRouter()
+  router.locale = 'de'
 
-  const { parsedHref, clientSide, isExternal, isContentOnly } = parseLink()
+  const { parsedHref, isExternal, isContentOnly } = parseLink()
 
   if (parsedHref === '') renderEmptyLink()
 
-  return forceNoCSR || !clientSide
-    ? renderDefaultLink(parsedHref)
-    : renderClientSideLink(parsedHref)
+  return renderDefaultLink(
+    isExternal ? parsedHref : 'https://de.serlo.org' + parsedHref
+  )
 
   function parseLink() {
     if (!href || href === undefined || href === '' || !router.locale)
@@ -110,7 +111,7 @@ function InternalLink({
   }
 
   function renderDefaultLink(_href: string) {
-    const openBlank = unreviewed && isExternal
+    const openBlank = true
     return (
       // eslint-disable-next-line react/jsx-no-target-blank
       <a

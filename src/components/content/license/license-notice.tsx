@@ -5,6 +5,7 @@ import { useRouter } from 'next/router'
 import { LicenseIcons } from './license-icons'
 import { Link } from '../link'
 import { FaIcon } from '@/components/fa-icon'
+import { useEntityId } from '@/contexts/entity-id-context'
 import { useInstanceData } from '@/contexts/instance-context'
 import { LicenseData } from '@/data-types'
 import { tw } from '@/helper/tw'
@@ -18,6 +19,7 @@ interface LicenseNoticeProps {
 export function LicenseNotice({ data, minimal, type }: LicenseNoticeProps) {
   const { lang, strings } = useInstanceData()
   const router = useRouter()
+  const entityId = useEntityId()
   const urlSlugArray = Array.isArray(router.query.slug)
     ? router.query.slug
     : [router.query.slug]
@@ -53,10 +55,17 @@ export function LicenseNotice({ data, minimal, type }: LicenseNoticeProps) {
             {licenseName}
           </a>
           {renderHiddenMeta()}
-          {' → '}
-          <Link href={`/license/detail/${id}`}>
-            <b>{strings.license.readMore}</b>
-          </Link>
+          <b className="ml-4">
+            Quelle:{' '}
+            <a
+              href={`https://de.serlo.org/${entityId}`}
+              target="_blank"
+              className="hover:underline"
+              rel="noreferrer"
+            >
+              serlo.org
+            </a>
+          </b>
         </span>
       </div>
     )

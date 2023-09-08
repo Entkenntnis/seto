@@ -12,9 +12,7 @@ const bodyStyles = {
 
 export default class MyDocument extends Document {
   render() {
-    const langData = this.props.__NEXT_DATA__.locale
-      ? getInstanceDataByLang(this.props.__NEXT_DATA__.locale as Instance)
-      : undefined
+    const langData = getInstanceDataByLang(Instance.De)
     return (
       <Html className="print:serlo-print-style">
         {/* background on html for overscroll area */}
