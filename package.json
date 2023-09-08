@@ -46,6 +46,7 @@
     "@serlo/authorization": "^0.52.1",
     "@serlo/markdown": "Entkenntnis/tmp-serlo-markdown",
     "@tippyjs/react": "^4.2.6",
+    "@vercel/analytics": "^1.0.2",
     "algebra.js": "^0.2.6",
     "array-move": "^4.0.0",
     "autoprefixer": "^10.4.14",

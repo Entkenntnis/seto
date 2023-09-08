@@ -1,3 +1,4 @@
+import { Analytics } from '@vercel/analytics/react'
 import { AppProps } from 'next/app'
 
 // add font-faces to global css
@@ -59,5 +60,10 @@ export default function App(props: AppProps) {
     return Component.renderer(props.pageProps, props)
   }
 
-  return <Component {...props.pageProps} />
+  return (
+    <>
+      <Component {...props.pageProps} />
+      <Analytics />
+    </>
+  )
 }
