@@ -1,7 +1,5 @@
 import { Analytics } from '@vercel/analytics/react'
 import { GetStaticPaths, GetStaticProps } from 'next'
-import Image from 'next/image'
-import Link from 'next/link'
 
 import { EntityBase } from '@/components/entity-base'
 import { FrontendClientBase } from '@/components/frontend-client-base'
@@ -23,22 +21,6 @@ export default renderedPageNoHooks<SlugProps>(({ pageData }) => {
         entityId={pageData.taxonomyData.id}
         authorization={pageData.authorization}
       >
-        <div className="mx-auto max-w-[900px]">
-          <Image
-            src="/header.jpg"
-            alt="Bild von einem Kloster in Nepal"
-            width={1101}
-            height={263}
-          />
-          <h1 className="mt-4 border-b-2 border-brand pb-2 text-center text-4xl">
-            Seto
-          </h1>
-          <div className="mb-24 mt-4 text-center">
-            <Link href="/" className="serlo-link">
-              zurück zur Übersicht
-            </Link>
-          </div>
-        </div>
         <EntityBase page={pageData} entityId={pageData.taxonomyData.id}>
           <Topic data={pageData.taxonomyData} />
         </EntityBase>

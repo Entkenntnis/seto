@@ -421,6 +421,7 @@ function renderElement({
         id={element.context.id}
         href={element.href}
         unrevisedRevisions={element.unrevisedRevisions}
+        data={element}
       >
         {children}
       </ExerciseGroup>

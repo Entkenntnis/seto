@@ -1,7 +1,9 @@
 import { faTrash } from '@fortawesome/free-solid-svg-icons'
 import clsx from 'clsx'
 import dynamic from 'next/dynamic'
-import { Fragment, useState } from 'react'
+import Image from 'next/image'
+import Link from 'next/link'
+import { Fragment, useEffect, useState } from 'react'
 import { RatingProps } from 'react-simple-star-rating'
 
 import { NewFolderPrototypeProps } from './new-folder-prototype'
@@ -16,6 +18,8 @@ import { TaxonomyTermType } from '@/fetcher/graphql-types/operations'
 import { abSubmission } from '@/helper/ab-submission'
 import { isProduction } from '@/helper/is-production'
 import { renderArticle } from '@/schema/article-renderer'
+import { StorageData, getData, setUserName } from '@/seto/storage'
+import { StorageContextProvider } from '@/seto/storage-context'
 
 export interface TopicProps {
   data: TaxonomyData
@@ -43,6 +47,26 @@ export function Topic({ data }: TopicProps) {
 
   const [hasFeedback, setHasFeedback] = useState(false)
 
+  const [storageData, setStorageData] = useState<StorageData | null>(null)
+
+  const [showNameModal, setNameModal] = useState(false)
+
+  const [name, setName] = useState('')
+
+  useEffect(() => {
+    const data = getData()
+    setStorageData(data)
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    ;(window as any).__triggerRender = () => {
+      setStorageData(getData())
+    }
+
+    if (!data.name) {
+      setNameModal(true)
+    }
+  }, [])
+
   const isExerciseFolder = data.taxonomyType === TaxonomyTermType.ExerciseFolder
   const isTopic = data.taxonomyType === TaxonomyTermType.Topic
 
@@ -51,31 +75,133 @@ export function Topic({ data }: TopicProps) {
 
   return (
     <>
-      {data.trashed && renderTrashedNotice()}
-      {renderHeader()}
-      <div className="min-h-1/2">
-        <div className="mt-6 sm:mb-5">
-          {data.description &&
-            renderArticle(data.description, `taxdesc${data.id}`)}
-        </div>
-
-        {renderSubterms()}
-
-        {renderExercises()}
-
-        {isTopic && <TopicCategories data={data} full />}
-
-        {isExerciseFolder && data.events && (
-          <TopicCategories
-            data={data}
-            categories={[TopicCategoryType.events]}
-            full
-          />
+      <StorageContextProvider
+        value={
+          storageData
+            ? {
+                data: storageData,
+                update() {
+                  setStorageData(getData())
+                },
+              }
+            : null
+        }
+      >
+        {showNameModal && (
+          <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/20">
+            <div
+              className="relative z-[200] h-[280px] w-[500px] rounded-xl bg-white"
+              onClick={(e) => {
+                e.stopPropagation()
+              }}
+            >
+              {/*<button
+                className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300"
+                onClick={() => {
+                  //closeModal(core)
+                  // switchToPage(core, 'overview')
+                }}
+              >
+                <FaIcon icon={faTimes} />
+              </button>*/}
+              <div>
+                <p className="mb-4 ml-4 mt-6 text-center text-lg font-bold">
+                  Herzlich Willkommen!
+                </p>
+                <p className="mt-6 text-center">Wie lautet dein Name?</p>
+                <p className="text-center">
+                  <input
+                    value={name}
+                    onChange={(e) => {
+                      setName(e.target.value)
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.code === 'Enter' && name.trim()) {
+                        setUserName(name.trim())
+                        setStorageData(getData())
+                        setNameModal(false)
+                      }
+                    }}
+                    className="mt-4 rounded border-2 border-blue-500 text-center text-3xl"
+                    maxLength={30}
+                  />
+                </p>
+                <p className="mt-3 text-center text-sm italic text-gray-500">
+                  Dein Name wird öffentlich angzeigt.
+                  <button
+                    className="ml-10 underline"
+                    onClick={() => {
+                      const letters = 'abcdefghijklmnopqrstuvwxyz0123456789'
+                      let n = ''
+                      while (n.length < 6) {
+                        n += letters[Math.floor(Math.random() * letters.length)]
+                      }
+                      setName(n)
+                    }}
+                  >
+                    zufälliger Name
+                  </button>
+                </p>
+              </div>
+              <p className="mb-5 mt-8 px-4 text-center">
+                <button
+                  className="rounded bg-green-200 px-2 py-0.5 hover:bg-green-300 disabled:bg-gray-200 disabled:text-gray-700"
+                  onClick={() => {
+                    setUserName(name.trim())
+                    setStorageData(getData())
+                    setNameModal(false)
+                  }}
+                  disabled={!name.trim()}
+                >
+                  Loslegen!
+                </button>
+              </p>
+            </div>
+          </div>
         )}
-      </div>
-      {defaultLicense && <LicenseNotice data={defaultLicense} />}
+        <div className="mx-auto max-w-[900px]">
+          <Image
+            src="/header.jpg"
+            alt="Bild von einem Kloster in Nepal"
+            width={1101}
+            height={263}
+          />
+          <h1 className="mt-4 border-b-2 border-brand pb-2 text-center text-4xl">
+            Seto
+          </h1>
+          <div className="mb-24 mt-4 text-center">
+            <Link href="/" className="serlo-link">
+              zurück zur Übersicht
+            </Link>
+            {storageData?.name && (
+              <span className="ml-12">Dein Name: {storageData.name}</span>
+            )}
+          </div>
+        </div>
+        {data.trashed && renderTrashedNotice()}
+        {renderHeader()}
+        <div className="min-h-1/2">
+          <div className="mt-6 sm:mb-5">
+            {data.description &&
+              renderArticle(data.description, `taxdesc${data.id}`)}
+          </div>
 
-      {/* Temporary donations banner trial */}
+          {renderSubterms()}
+
+          {renderExercises()}
+
+          {isTopic && <TopicCategories data={data} full />}
+
+          {isExerciseFolder && data.events && (
+            <TopicCategories
+              data={data}
+              categories={[TopicCategoryType.events]}
+              full
+            />
+          )}
+        </div>
+        {defaultLicense && <LicenseNotice data={defaultLicense} />}
+      </StorageContextProvider>
     </>
   )
 

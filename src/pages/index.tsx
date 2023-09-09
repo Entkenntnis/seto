@@ -20,6 +20,9 @@ export default function Index() {
         <h1 className="mt-4 border-b-2 border-brand pb-2 text-center text-4xl">
           Seto
         </h1>
+        <div className="mt-12 h-[400px] bg-pink-100">
+          Hier kommt eine Highscore hin
+        </div>
         {data.map((entry, i) => (
           <div key={i} className="mx-auto mt-12">
             <h2 className="ml-4 text-xl font-bold">{entry.title}</h2>
@@ -36,7 +39,7 @@ export default function Index() {
             </div>
           </div>
         ))}
-        <div className="mt-[300px]">
+        <div className="mb-4 mt-[300px]">
           Footer: Impressum - Datenschutzerklärung. Alle Inhalte CC BY SA von
           Serlo.org
         </div>

@@ -1,3 +1,4 @@
+import clsx from 'clsx'
 import dynamic from 'next/dynamic'
 import { useState, useEffect } from 'react'
 
@@ -12,6 +13,7 @@ import type { FrontendExerciseNode } from '@/frontend-node-types'
 import type { NodePath, RenderNestedFunction } from '@/schema/article-renderer'
 import { H5pRenderer } from '@/serlo-editor/plugins/h5p/renderer'
 import { EditorPluginType } from '@/serlo-editor-integration/types/editor-plugin-type'
+import { useStorageData } from '@/seto/storage-context'
 
 export interface ExerciseProps {
   node: FrontendExerciseNode
@@ -28,14 +30,25 @@ const AuthorToolsExercises = dynamic<MoreAuthorToolsProps>(() =>
 export function Exercise({ node, renderNested, path }: ExerciseProps) {
   const auth = useAuthentication()
   const [loaded, setLoaded] = useState(false)
-  useEffect(() => setLoaded(true), [])
+
+  useEffect(() => {
+    setLoaded(true)
+  }, [])
+  const { data } = useStorageData()
+
+  const solved = data.solved.includes(node.context.id)
 
   const isRevisionView =
     path && typeof path[0] === 'string' && path[0].startsWith('revision')
 
   if (node.grouped)
     return (
-      <li className="serlo-exercise-wrapper serlo-grouped-exercise-wrapper">
+      <li
+        className={clsx(
+          'serlo-exercise-wrapper serlo-grouped-exercise-wrapper',
+          solved && 'before:!bg-brandgreen-50 before:!text-brandgreen'
+        )}
+      >
         {renderExerciseContent()}
       </li>
     )
@@ -48,11 +61,12 @@ export function Exercise({ node, renderNested, path }: ExerciseProps) {
 
   function renderExerciseContent() {
     return (
-      <>
+      <div className={clsx(solved && 'bg-brandgreen-100')}>
         {node.grouped ? null : ( // grouped ex numbering solved in css
           <ExerciseNumbering
             index={node.positionOnPage!}
             href={node.href ? node.href : `/${node.context.id}`}
+            solved={solved}
           />
         )}
         <div className="flex justify-between">
@@ -61,7 +75,7 @@ export function Exercise({ node, renderNested, path }: ExerciseProps) {
         </div>
         {renderInteractive()}
         <Solution node={node} loaded={loaded} renderNested={renderNested} />
-      </>
+      </div>
     )
   }
 
