@@ -10,7 +10,7 @@ export default function Index() {
       <Head>
         <title>Seto</title>
       </Head>
-      <div className="mx-auto max-w-[900px]">
+      <div className="mx-auto max-w-[800px]">
         <Image
           src="/header.jpg"
           alt="Bild von einem Kloster in Nepal"
@@ -20,7 +20,7 @@ export default function Index() {
         <h1 className="mt-4 border-b-2 border-brand pb-2 text-center text-4xl">
           Seto
         </h1>
-        <div className="mt-12 h-[400px] bg-pink-100">
+        <div className="mt-12 h-[400px] bg-pink-100 pt-12 text-center">
           Hier kommt eine Highscore hin
         </div>
         {data.map((entry, i) => (
@@ -41,7 +41,7 @@ export default function Index() {
         ))}
         <div className="mb-4 mt-[300px]">
           Footer: Impressum - Datenschutzerklärung. Alle Inhalte CC BY SA von
-          Serlo.org
+          Serlo.org - Fortschritt zurücksetzen
         </div>
       </div>
     </>

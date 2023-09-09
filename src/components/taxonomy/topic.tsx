@@ -1,7 +1,6 @@
 import { faTrash } from '@fortawesome/free-solid-svg-icons'
 import clsx from 'clsx'
 import dynamic from 'next/dynamic'
-import Image from 'next/image'
 import Link from 'next/link'
 import { Fragment, useEffect, useState } from 'react'
 import { RatingProps } from 'react-simple-star-rating'
@@ -15,6 +14,7 @@ import { useAB } from '@/contexts/ab'
 import { useInstanceData } from '@/contexts/instance-context'
 import { TaxonomyData, TopicCategoryType } from '@/data-types'
 import { TaxonomyTermType } from '@/fetcher/graphql-types/operations'
+import { FrontendNodeType } from '@/frontend-node-types'
 import { abSubmission } from '@/helper/ab-submission'
 import { isProduction } from '@/helper/is-production'
 import { renderArticle } from '@/schema/article-renderer'
@@ -53,12 +53,19 @@ export function Topic({ data }: TopicProps) {
 
   const [name, setName] = useState('')
 
+  const [isTriggerUsed, setTriggerUsed] = useState(false)
+
+  const [previousReordered, setPreviousReordered] = useState<
+    typeof data.exercisesContent
+  >(data.exercisesContent)
+
   useEffect(() => {
     const data = getData()
     setStorageData(data)
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     ;(window as any).__triggerRender = () => {
+      setTriggerUsed(true)
       setStorageData(getData())
     }
 
@@ -72,6 +79,40 @@ export function Topic({ data }: TopicProps) {
 
   const hasExercises = data.exercisesContent.length > 0
   const defaultLicense = hasExercises ? getDefaultLicense() : undefined
+
+  const unsolvedExercises: typeof data.exercisesContent = []
+  const solvedExercises: typeof data.exercisesContent = []
+
+  if (hasExercises && storageData) {
+    data.exercisesContent.forEach((exercise) => {
+      if (exercise.type === FrontendNodeType.Exercise) {
+        if (!storageData.solved.includes(exercise.context.id)) {
+          unsolvedExercises.push(exercise)
+        } else {
+          solvedExercises.push(exercise)
+        }
+      } else {
+        if (
+          !exercise.children!.every((child) =>
+            storageData.solved.includes(child.context.id)
+          )
+        ) {
+          unsolvedExercises.push(exercise)
+        } else {
+          solvedExercises.push(exercise)
+        }
+      }
+    })
+  }
+
+  const reorderedExercises = unsolvedExercises.concat(solvedExercises)
+
+  if (
+    JSON.stringify(reorderedExercises) !== JSON.stringify(previousReordered) &&
+    !isTriggerUsed
+  ) {
+    setPreviousReordered(reorderedExercises)
+  }
 
   return (
     <>
@@ -160,21 +201,17 @@ export function Topic({ data }: TopicProps) {
           </div>
         )}
         <div className="mx-auto max-w-[900px]">
-          <Image
-            src="/header.jpg"
-            alt="Bild von einem Kloster in Nepal"
-            width={1101}
-            height={263}
-          />
-          <h1 className="mt-4 border-b-2 border-brand pb-2 text-center text-4xl">
+          <h1 className="mt-8 border-b-2 border-brand pb-2 text-center text-4xl">
             Seto
           </h1>
           <div className="mb-24 mt-4 text-center">
             <Link href="/" className="serlo-link">
-              zurück zur Übersicht
+              Zur Übersicht
             </Link>
             {storageData?.name && (
-              <span className="ml-12">Dein Name: {storageData.name}</span>
+              <span className="ml-12">
+                Dein Name: <strong>{storageData.name}</strong>
+              </span>
             )}
           </div>
         </div>
@@ -259,7 +296,7 @@ export function Topic({ data }: TopicProps) {
     return (
       hasExercises &&
       data.exercisesContent &&
-      data.exercisesContent.map((exercise, i) => {
+      previousReordered.map((exercise, i) => {
         return (
           <Fragment key={i}>
             {ab?.experiment === 'headings' &&

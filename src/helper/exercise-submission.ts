@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { abSubmission } from './ab-submission'
 import { isProduction } from './is-production'
 import { ABValue } from '@/contexts/ab'
-import { isSolved, setSolved } from '@/seto/storage'
+import { setSolved } from '@/seto/storage'
 
 export interface ExerciseSubmissionData {
   path: string
@@ -18,7 +18,7 @@ const sesionStorageKey = 'frontend_exercise_submission_session_id'
 export function exerciseSubmission(data: ExerciseSubmissionData, ab: ABValue) {
   if (data.result === 'correct') {
     setSolved(data.entityId)
-    console.log('test', isSolved(data.entityId), data.entityId)
+    //console.log('test', isSolved(data.entityId), data.entityId)
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
     ;(window as any)?.__triggerRender()
   }
