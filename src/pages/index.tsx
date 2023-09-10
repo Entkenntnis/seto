@@ -66,9 +66,15 @@ function Content() {
                 className="mr-2 mt-4 block flex h-[100px] w-[255px] cursor-pointer select-none flex-col justify-between rounded-xl bg-gray-100 px-4 py-2 hover:bg-gray-200 hover:no-underline"
               >
                 <h3>{folder.title}</h3>
+
                 {storage.data.percentage[folder.id] ? (
-                  <div className="text-right text-brandgreen">
-                    {storage.data.percentage[folder.id]}% Fortschritt
+                  <div className="relative h-2 bg-gray-200">
+                    <div
+                      className="absolute bottom-0 left-0 top-0 bg-brandgreen"
+                      style={{
+                        width: `${storage.data.percentage[folder.id]}%`,
+                      }}
+                    ></div>
                   </div>
                 ) : null}
               </Link>
