@@ -35,7 +35,7 @@ function Content() {
         Seto
       </h1>
 
-      <div className="mx-4 mt-8 flex justify-between">
+      <div className="mx-4 mb-24 mt-8 flex justify-between">
         {storage.data?.name ? (
           <span>
             Hallo <strong>{storage.data.name}</strong>, du hast bisher{' '}
@@ -66,14 +66,14 @@ function Content() {
         </span>
       </div>
       {data.map((entry, i) => (
-        <div key={i} className="mx-auto mt-24">
+        <div key={i} className="mx-auto mt-10">
           <h2 className="ml-4 text-xl font-bold">{entry.title}</h2>
           <div className="flex flex-wrap">
             {entry.content.map((folder) => (
               <Link
                 key={folder.id}
                 href={`/${folder.id}`}
-                className="mr-2 mt-8 block flex h-[100px] w-[255px] cursor-pointer select-none flex-col justify-between rounded-xl bg-gray-100 p-4 hover:bg-gray-200 hover:no-underline"
+                className="mr-2 mt-4 block flex h-[100px] w-[255px] cursor-pointer select-none flex-col justify-between rounded-xl bg-gray-100 px-4 py-2 hover:bg-gray-200 hover:no-underline"
               >
                 <h3>{folder.title}</h3>
                 {storage.data.percentage[folder.id] ? (

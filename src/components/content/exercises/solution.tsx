@@ -114,7 +114,11 @@ export function Solution({
 
   function renderLicense() {
     if (!node.task.license) return null
-    return <LicenseNotice minimal data={node.task.license} type="task" />
+    return (
+      <div className="pointer-events-none -mt-12">
+        <LicenseNotice minimal data={node.task.license} type="task" />
+      </div>
+    )
   }
 }
 
