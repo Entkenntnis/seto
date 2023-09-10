@@ -1,7 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 
-import { prisma } from '@/helper/prisma'
-
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -11,7 +9,7 @@ export default async function handler(
     return
   }
 
-  try {
+  /*try {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const { path, event, isProduction } = req.body
 
@@ -46,6 +44,6 @@ export default async function handler(
   } catch (e) {
     // eslint-disable-next-line no-console
     // console.log(e)
-  }
+  }*/
   res.send('bad')
 }
