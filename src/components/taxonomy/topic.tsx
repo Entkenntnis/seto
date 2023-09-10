@@ -18,7 +18,7 @@ import { FrontendNodeType } from '@/frontend-node-types'
 import { abSubmission } from '@/helper/ab-submission'
 import { isProduction } from '@/helper/is-production'
 import { renderArticle } from '@/schema/article-renderer'
-import { getData, setUserName } from '@/seto/storage'
+import { getData, setPercentage, setUserName } from '@/seto/storage'
 import { useStorageData } from '@/seto/storage-context'
 
 export interface TopicProps {
@@ -104,6 +104,33 @@ export function Topic({ data }: TopicProps) {
     setPreviousReordered(reorderedExercises)
   }
 
+  let countSolvedExercises = 0
+  let countExercises = 0
+
+  if (hasExercises) {
+    data.exercisesContent.forEach((exercise) => {
+      if (exercise.type === FrontendNodeType.Exercise) {
+        countExercises++
+        if (storage.data.solved.includes(exercise.context.id)) {
+          countSolvedExercises++
+        }
+      } else {
+        exercise.children!.forEach((child) => {
+          countExercises++
+          if (storage.data.solved.includes(child.context.id)) {
+            countSolvedExercises++
+          }
+        })
+      }
+    })
+  }
+
+  const percentage = Math.round((100 * countSolvedExercises) / countExercises)
+
+  if (typeof window !== 'undefined') {
+    setPercentage(data.id, percentage)
+  }
+
   return (
     <>
       {showNameModal && (
@@ -182,16 +209,22 @@ export function Topic({ data }: TopicProps) {
         <h1 className="mt-8 border-b-2 border-brand pb-2 text-center text-4xl">
           Seto
         </h1>
-        <div className="mb-24 mt-4 text-center">
+        <div className="mb-8 mt-4 text-center">
           <Link href="/" className="serlo-link">
             Zur Übersicht
           </Link>
           {storage.data?.name && (
             <span className="ml-12">
-              Dein Name: <strong>{storage.data.name}</strong>
+              {percentage}% Fortschritt von <strong>{storage.data.name}</strong>
             </span>
           )}
         </div>
+      </div>
+      <div className="relative mx-side mb-16 h-4 bg-gray-200">
+        <div
+          className="absolute bottom-0 left-0 top-0 bg-brandgreen"
+          style={{ width: `${percentage}%` }}
+        ></div>
       </div>
       {data.trashed && renderTrashedNotice()}
       {renderHeader()}

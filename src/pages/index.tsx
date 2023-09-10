@@ -47,8 +47,20 @@ function Content() {
         )}
 
         <span>
-          <button className="font-bold hover:underline">Highscore</button>
-          <button className="ml-12 font-bold hover:underline">
+          <button
+            className="font-bold hover:underline"
+            onClick={() => {
+              alert('Die Funktion kommt bald.')
+            }}
+          >
+            Highscore
+          </button>
+          <button
+            className="ml-12 font-bold hover:underline"
+            onClick={() => {
+              alert('Die Funktion kommt bald.')
+            }}
+          >
             neuste Aktivität
           </button>
         </span>
@@ -61,9 +73,14 @@ function Content() {
               <Link
                 key={folder.id}
                 href={`/${folder.id}`}
-                className="mr-5 mt-8 block h-[100px] w-[280px] cursor-pointer select-none rounded-xl bg-gray-100 p-4 hover:bg-gray-200 hover:no-underline"
+                className="mr-5 mt-8 block flex h-[100px] w-[280px] cursor-pointer select-none flex-col justify-between rounded-xl bg-gray-100 p-4 hover:bg-gray-200 hover:no-underline"
               >
                 <h3>{folder.title}</h3>
+                {storage.data.percentage[folder.id] ? (
+                  <div className="text-right text-brandgreen">
+                    {storage.data.percentage[folder.id]}% Fortschritt
+                  </div>
+                ) : null}
               </Link>
             ))}
           </div>

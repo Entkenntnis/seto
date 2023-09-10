@@ -3,6 +3,7 @@ const key = 'seto_main_storage'
 export interface StorageData {
   name?: string
   solved: number[]
+  percentage: { [key: number]: number }
 }
 
 export function setUserName(name: string) {
@@ -34,7 +35,7 @@ export function getData() {
   const rawLoc = localStorage.getItem(key)
   const rawSes = sessionStorage.getItem(key)
 
-  const defaultData: StorageData = { solved: [] }
+  const defaultData: StorageData = { solved: [], percentage: {} }
 
   return JSON.parse(
     rawLoc ?? rawSes ?? JSON.stringify(defaultData)
@@ -53,4 +54,10 @@ function setData(data: StorageData) {
 export function reset() {
   localStorage.removeItem(key)
   sessionStorage.removeItem(key)
+}
+
+export function setPercentage(topic: number, percentage: number) {
+  const data = getData()
+  data.percentage[topic] = percentage
+  setData(data)
 }

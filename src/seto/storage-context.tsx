@@ -12,10 +12,14 @@ export const StorageContext = createContext<StorageContextData | null>(null)
 
 export const StorageContextProvider = StorageContext.Provider
 
-export function useStorageData() {
+export function useStorageData(): StorageContextData {
   const ctx = useContext(StorageContext)
   if (!ctx) {
-    return { data: { solved: [] }, update: () => {}, triggerUsed: false }
+    return {
+      data: { solved: [], percentage: {} },
+      update: () => {},
+      triggerUsed: false,
+    }
   }
   return ctx
 }
