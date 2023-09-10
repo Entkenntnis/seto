@@ -29,7 +29,7 @@ export const data: Klasse[] = [
     ],
   },
   {
-    title: 'Mittelschule Bayern - Quali Abschlussprüfungen Mathe 2022',
+    title: 'Mittelschule Bayern - Quali Abschlussprüfung Mathe 2022',
     content: [
       { id: 261570, title: 'Teil A' },
       { id: 261603, title: 'Teil B, Gruppe 1' },

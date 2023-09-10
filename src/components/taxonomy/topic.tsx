@@ -49,8 +49,6 @@ export function Topic({ data }: TopicProps) {
 
   const [showNameModal, setNameModal] = useState(false)
 
-  const [name, setName] = useState('')
-
   const [previousReordered, setPreviousReordered] = useState<
     typeof data.exercisesContent
   >(data.exercisesContent)
@@ -134,76 +132,13 @@ export function Topic({ data }: TopicProps) {
   return (
     <>
       {showNameModal && (
-        <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/20">
-          <div
-            className="relative z-[200] h-[280px] w-[500px] rounded-xl bg-white"
-            onClick={(e) => {
-              e.stopPropagation()
-            }}
-          >
-            {/*<button
-                className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300"
-                onClick={() => {
-                  //closeModal(core)
-                  // switchToPage(core, 'overview')
-                }}
-              >
-                <FaIcon icon={faTimes} />
-              </button>*/}
-            <div>
-              <p className="mb-4 ml-4 mt-6 text-center text-lg font-bold">
-                Herzlich Willkommen!
-              </p>
-              <p className="mt-6 text-center">Wie lautet dein Name?</p>
-              <p className="text-center">
-                <input
-                  value={name}
-                  onChange={(e) => {
-                    setName(e.target.value)
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.code === 'Enter' && name.trim()) {
-                      setUserName(name.trim())
-                      storage.update()
-                      setNameModal(false)
-                    }
-                  }}
-                  className="mt-4 rounded border-2 border-blue-500 text-center text-3xl"
-                  maxLength={30}
-                />
-              </p>
-              <p className="mt-3 text-center text-sm italic text-gray-500">
-                Dein Name wird öffentlich angzeigt.
-                <button
-                  className="ml-10 underline"
-                  onClick={() => {
-                    const letters = 'abcdefghijklmnopqrstuvwxyz0123456789'
-                    let n = ''
-                    while (n.length < 6) {
-                      n += letters[Math.floor(Math.random() * letters.length)]
-                    }
-                    setName(n)
-                  }}
-                >
-                  zufälliger Name
-                </button>
-              </p>
-            </div>
-            <p className="mb-5 mt-8 px-4 text-center">
-              <button
-                className="rounded bg-green-200 px-2 py-0.5 hover:bg-green-300 disabled:bg-gray-200 disabled:text-gray-700"
-                onClick={() => {
-                  setUserName(name.trim())
-                  storage.update()
-                  setNameModal(false)
-                }}
-                disabled={!name.trim()}
-              >
-                Loslegen!
-              </button>
-            </p>
-          </div>
-        </div>
+        <NameModal
+          setNameStore={(name) => {
+            setUserName(name)
+            storage.update()
+            setNameModal(false)
+          }}
+        />
       )}
       <div className="mx-auto max-w-[900px]">
         <h1 className="mt-8 border-b-2 border-brand pb-2 text-center text-4xl">
@@ -372,4 +307,80 @@ export function Topic({ data }: TopicProps) {
     //no part of collection has default license so don't show default notice.
     return undefined
   }
+}
+
+interface NameModalProps {
+  setNameStore: (name: string) => void
+}
+
+function NameModal({ setNameStore }: NameModalProps) {
+  const [name, setName] = useState('')
+  return (
+    <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/20">
+      <div
+        className="relative z-[200] h-[280px] w-[500px] rounded-xl bg-white"
+        onClick={(e) => {
+          e.stopPropagation()
+        }}
+      >
+        {/*<button
+        className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300"
+        onClick={() => {
+          //closeModal(core)
+          // switchToPage(core, 'overview')
+        }}
+      >
+        <FaIcon icon={faTimes} />
+      </button>*/}
+        <div>
+          <p className="mb-4 ml-4 mt-6 text-center text-lg font-bold">
+            Herzlich Willkommen!
+          </p>
+          <p className="mt-6 text-center">Wie lautet dein Name?</p>
+          <p className="text-center">
+            <input
+              value={name}
+              onChange={(e) => {
+                setName(e.target.value)
+              }}
+              onKeyDown={(e) => {
+                if (e.code === 'Enter' && name.trim()) {
+                  setNameStore(name.trim())
+                }
+              }}
+              className="mt-4 rounded border-2 border-blue-500 text-center text-3xl"
+              maxLength={25}
+            />
+          </p>
+          <p className="mt-3 text-center text-sm italic text-gray-500">
+            Dein Name wird öffentlich angzeigt.
+            <button
+              className="ml-10 underline"
+              onClick={() => {
+                const letters = 'abcdefghijklmnopqrstuvwxyz0123456789'
+                let n = ''
+                while (n.length < 6) {
+                  n += letters[Math.floor(Math.random() * letters.length)]
+                }
+                setName(n)
+              }}
+            >
+              zufälliger Name
+            </button>
+          </p>
+        </div>
+        <p className="mb-5 mt-8 px-4 text-center">
+          <button
+            className="rounded bg-green-200 px-2 py-0.5 hover:bg-green-300 disabled:bg-gray-200 disabled:text-gray-700"
+            onClick={() => {
+              setNameStore(name.trim())
+            }}
+            disabled={!name.trim()}
+          >
+            Loslegen!
+          </button>
+        </p>
+      </div>
+    </div>
+  )
 }

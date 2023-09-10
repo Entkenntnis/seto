@@ -18,6 +18,7 @@ const sesionStorageKey = 'frontend_exercise_submission_session_id'
 export function exerciseSubmission(data: ExerciseSubmissionData, ab: ABValue) {
   if (data.result === 'correct') {
     setSolved(data.entityId)
+
     //console.log('test', isSolved(data.entityId), data.entityId)
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
     ;(window as any)?.__triggerRender()

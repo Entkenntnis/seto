@@ -1,14 +1,34 @@
+import { v4 } from 'uuid'
+
 const key = 'seto_main_storage'
 
 export interface StorageData {
   name?: string
   solved: number[]
   percentage: { [key: number]: number }
+  sessionId?: string
 }
 
 export function setUserName(name: string) {
   const data = getData()
-  data.name = name
+  if (!data.name) {
+    data.name = name
+    if (!data.sessionId) {
+      data.sessionId = v4()
+    }
+    void (async () => {
+      await fetch('/api/frontend/event', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          event: `setname_${name}`,
+          sessionId: data.sessionId,
+        }),
+      })
+    })()
+  }
   setData(data)
 }
 
@@ -21,6 +41,21 @@ export function setSolved(id: number) {
   const data = getData()
   if (!data.solved.includes(id)) {
     data.solved.push(id)
+    if (!data.sessionId) {
+      data.sessionId = v4()
+    }
+    void (async () => {
+      await fetch('/api/frontend/event', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          event: `solved_${id}`,
+          sessionId: data.sessionId,
+        }),
+      })
+    })()
   }
   setData(data)
 }

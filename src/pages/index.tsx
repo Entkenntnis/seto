@@ -35,7 +35,7 @@ function Content() {
         Seto
       </h1>
 
-      <div className="mx-4 mb-24 mt-8 flex justify-between">
+      <div className="mx-4 mb-14 mt-8 flex justify-between">
         {storage.data?.name ? (
           <span>
             Hallo <strong>{storage.data.name}</strong>, du hast bisher{' '}
@@ -47,14 +47,9 @@ function Content() {
         )}
 
         <span>
-          <button
-            className="font-bold hover:underline"
-            onClick={() => {
-              alert('Die Funktion kommt bald.')
-            }}
-          >
+          <Link className="font-bold hover:underline" href="/highscore">
             Highscore
-          </button>
+          </Link>
           <button
             className="ml-12 font-bold hover:underline"
             onClick={() => {
@@ -66,7 +61,7 @@ function Content() {
         </span>
       </div>
       {data.map((entry, i) => (
-        <div key={i} className="mx-auto mt-10">
+        <div key={i} className="mx-auto mt-12">
           <h2 className="ml-4 text-xl font-bold">{entry.title}</h2>
           <div className="flex flex-wrap">
             {entry.content.map((folder) => (
@@ -86,7 +81,7 @@ function Content() {
           </div>
         </div>
       ))}
-      <div className="mb-4 ml-4 mt-[300px]">
+      <div className="mb-4 ml-4 mt-[180px]">
         <a
           href="https://hack.arrrg.de/contact"
           target="_blank"
