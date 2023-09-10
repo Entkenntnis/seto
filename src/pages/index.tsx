@@ -50,14 +50,9 @@ function Content() {
           <Link className="font-bold hover:underline" href="/highscore">
             Highscore
           </Link>
-          <button
-            className="ml-12 font-bold hover:underline"
-            onClick={() => {
-              alert('Die Funktion kommt bald.')
-            }}
-          >
+          <Link href="/activity" className="ml-12 font-bold hover:underline">
             neuste Aktivität
-          </button>
+          </Link>
         </span>
       </div>
       {data.map((entry, i) => (
