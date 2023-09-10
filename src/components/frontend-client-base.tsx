@@ -16,6 +16,8 @@ import { LoggedInDataProvider } from '@/contexts/logged-in-data-context'
 import { InstanceData, LoggedInData } from '@/data-types'
 import { Instance } from '@/fetcher/graphql-types/operations'
 import { triggerSentry } from '@/helper/trigger-sentry'
+import { StorageData, getData } from '@/seto/storage'
+import { StorageContextProvider } from '@/seto/storage-context'
 
 export type FrontendClientBaseProps = PropsWithChildren<{
   noHeaderFooter?: boolean
@@ -27,10 +29,10 @@ export type FrontendClientBaseProps = PropsWithChildren<{
 }>
 
 Router.events.on('routeChangeStart', () => {
-  NProgress.start()
+  //NProgress.start()
 })
 Router.events.on('routeChangeComplete', (url, { shallow }) => {
-  NProgress.done()
+  //NProgress.done()
   // when using csr and running into an error, try without csr once
   if (!shallow && document.getElementById('error-page-description') !== null) {
     triggerSentry({ message: 'trying again without csr' })
@@ -71,6 +73,20 @@ export function FrontendClientBase({
     }
   })
 
+  const [storageData, setStorageData] = useState<StorageData | null>(null)
+  const [isTriggerUsed, setTriggerUsed] = useState(false)
+
+  useEffect(() => {
+    const data = getData()
+    setStorageData(data)
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    ;(window as any).__triggerRender = () => {
+      setTriggerUsed(true)
+      setStorageData(getData())
+    }
+  }, [])
+
   useEffect(() => {
     //tiny history
     sessionStorage.setItem(
@@ -98,32 +114,46 @@ export function FrontendClientBase({
 
   return (
     <InstanceDataProvider value={instanceData}>
-      <PrintMode />
-      <AuthProvider unauthenticatedAuthorizationPayload={authorization}>
-        <LoggedInDataProvider value={loggedInData}>
-          <EntityIdProvider value={entityId}>
-            <ConditionalWrap
-              condition={!noHeaderFooter}
-              wrapper={(kids) => <HeaderFooter>{kids}</HeaderFooter>}
-            >
+      <StorageContextProvider
+        value={
+          storageData
+            ? {
+                data: storageData,
+                update() {
+                  setStorageData(getData())
+                },
+                triggerUsed: isTriggerUsed,
+              }
+            : null
+        }
+      >
+        <PrintMode />
+        <AuthProvider unauthenticatedAuthorizationPayload={authorization}>
+          <LoggedInDataProvider value={loggedInData}>
+            <EntityIdProvider value={entityId}>
               <ConditionalWrap
-                condition={!noContainers}
-                wrapper={(kids) => (
-                  <div className="relative">
-                    <MaxWidthDiv showNav={showNav}>
-                      <main id="content">{kids}</main>
-                    </MaxWidthDiv>
-                  </div>
-                )}
+                condition={!noHeaderFooter}
+                wrapper={(kids) => <HeaderFooter>{kids}</HeaderFooter>}
               >
-                {/* should not be necessary…?*/}
-                {children as JSX.Element}
+                <ConditionalWrap
+                  condition={!noContainers}
+                  wrapper={(kids) => (
+                    <div className="relative">
+                      <MaxWidthDiv showNav={showNav}>
+                        <main id="content">{kids}</main>
+                      </MaxWidthDiv>
+                    </div>
+                  )}
+                >
+                  {/* should not be necessary…?*/}
+                  {children as JSX.Element}
+                </ConditionalWrap>
               </ConditionalWrap>
-            </ConditionalWrap>
-            <ToastNotice />
-          </EntityIdProvider>
-        </LoggedInDataProvider>
-      </AuthProvider>
+              <ToastNotice />
+            </EntityIdProvider>
+          </LoggedInDataProvider>
+        </AuthProvider>
+      </StorageContextProvider>
     </InstanceDataProvider>
   )
 }

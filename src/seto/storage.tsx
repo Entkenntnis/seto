@@ -49,3 +49,8 @@ function setData(data: StorageData) {
     sessionStorage.setItem(key, JSON.stringify(data))
   }
 }
+
+export function reset() {
+  localStorage.removeItem(key)
+  sessionStorage.removeItem(key)
+}
