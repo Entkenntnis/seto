@@ -16,7 +16,13 @@ import { LoggedInDataProvider } from '@/contexts/logged-in-data-context'
 import { InstanceData, LoggedInData } from '@/data-types'
 import { Instance } from '@/fetcher/graphql-types/operations'
 import { triggerSentry } from '@/helper/trigger-sentry'
-import { StorageData, getData } from '@/seto/storage'
+import {
+  StorageData,
+  getData,
+  isPersisted,
+  persist,
+  persistLater,
+} from '@/seto/storage'
 import { StorageContextProvider } from '@/seto/storage-context'
 
 export type FrontendClientBaseProps = PropsWithChildren<{
@@ -149,6 +155,33 @@ export function FrontendClientBase({
                   {children as JSX.Element}
                 </ConditionalWrap>
               </ConditionalWrap>
+              {storageData &&
+                !isPersisted() &&
+                storageData.solved.length > 0 &&
+                (!storageData.persistLater ||
+                  storageData.solved.length > storageData.persistLater + 2) && (
+                  <div className="fixed bottom-2 left-2 right-2 bg-yellow-200 py-4 text-center">
+                    Möchtest du deinen Fortschritt auf diesem Gerät speichern?{' '}
+                    <button
+                      className="mx-8 inline-block rounded bg-yellow-400 px-4 py-2 hover:bg-yellow-500"
+                      onClick={() => {
+                        persist()
+                        setStorageData(getData())
+                      }}
+                    >
+                      Speichern
+                    </button>{' '}
+                    <span
+                      className="cursor-pointer text-gray-600 hover:underline"
+                      onClick={() => {
+                        persistLater()
+                        setStorageData(getData())
+                      }}
+                    >
+                      später
+                    </span>
+                  </div>
+                )}
               <ToastNotice />
             </EntityIdProvider>
           </LoggedInDataProvider>

@@ -7,6 +7,7 @@ export interface StorageData {
   solved: number[]
   percentage: { [key: number]: number }
   sessionId?: string
+  persistLater?: number
 }
 
 export function setUserName(name: string) {
@@ -94,5 +95,21 @@ export function reset() {
 export function setPercentage(topic: number, percentage: number) {
   const data = getData()
   data.percentage[topic] = percentage
+  setData(data)
+}
+
+export function isPersisted() {
+  return localStorage.getItem(key) ? true : false
+}
+
+export function persist() {
+  const data = getData()
+  localStorage.setItem(key, '{}')
+  setData(data)
+}
+
+export function persistLater() {
+  const data = getData()
+  data.persistLater = data.solved.length
   setData(data)
 }
