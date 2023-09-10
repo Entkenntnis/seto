@@ -73,7 +73,7 @@ function Content() {
               <Link
                 key={folder.id}
                 href={`/${folder.id}`}
-                className="mr-5 mt-8 block flex h-[100px] w-[280px] cursor-pointer select-none flex-col justify-between rounded-xl bg-gray-100 p-4 hover:bg-gray-200 hover:no-underline"
+                className="mr-2 mt-8 block flex h-[100px] w-[255px] cursor-pointer select-none flex-col justify-between rounded-xl bg-gray-100 p-4 hover:bg-gray-200 hover:no-underline"
               >
                 <h3>{folder.title}</h3>
                 {storage.data.percentage[folder.id] ? (

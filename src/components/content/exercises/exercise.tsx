@@ -8,8 +8,10 @@ import { ScMcExercise } from './sc-mc-exercise'
 import { Solution } from './solution'
 import { useAuthentication } from '@/auth/use-authentication'
 import type { MoreAuthorToolsProps } from '@/components/user-tools/foldout-author-menus/more-author-tools'
+import { useAB } from '@/contexts/ab'
 import { ExerciseInlineType } from '@/data-types'
 import type { FrontendExerciseNode } from '@/frontend-node-types'
+import { exerciseSubmission } from '@/helper/exercise-submission'
 import type { NodePath, RenderNestedFunction } from '@/schema/article-renderer'
 import { H5pRenderer } from '@/serlo-editor/plugins/h5p/renderer'
 import { EditorPluginType } from '@/serlo-editor-integration/types/editor-plugin-type'
@@ -36,10 +38,14 @@ export function Exercise({ node, renderNested, path }: ExerciseProps) {
   }, [])
   const { data } = useStorageData()
 
+  const ab = useAB()
+
   const solved = data.solved.includes(node.context.id)
 
   const isRevisionView =
     path && typeof path[0] === 'string' && path[0].startsWith('revision')
+
+  const hasInteractive = node.task.edtrState && node.task.edtrState.interactive
 
   if (node.grouped)
     return (
@@ -74,6 +80,27 @@ export function Exercise({ node, renderNested, path }: ExerciseProps) {
           {renderToolsButton()}
         </div>
         {renderInteractive()}
+        {!hasInteractive && !solved && (
+          <div className="-mb-8 mt-4 text-right">
+            <button
+              className="text-brandgreen-400 hover:underline"
+              onClick={() => {
+                exerciseSubmission(
+                  {
+                    path: '',
+                    entityId: node.context.id,
+                    revisionId: node.context.revisionId,
+                    result: 'correct',
+                    type: 'text',
+                  },
+                  ab
+                )
+              }}
+            >
+              Aufgabe als fertig markieren
+            </button>
+          </div>
+        )}
         <Solution node={node} loaded={loaded} renderNested={renderNested} />
       </div>
     )
